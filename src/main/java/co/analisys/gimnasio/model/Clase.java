@@ -20,5 +20,5 @@ public class Clase {
     private Entrenador entrenador;
     */
 
-    private String entrenadorId;
+    private Long entrenadorId;
 }
