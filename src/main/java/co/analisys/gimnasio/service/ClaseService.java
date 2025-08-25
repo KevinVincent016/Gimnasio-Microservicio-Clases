@@ -19,4 +19,26 @@ public class ClaseService {
     public List<Clase> obtenerTodasClases() {
         return claseRepository.findAll();
     }
+
+    public Clase obtenerClasePorId(Long id) {
+        return claseRepository.findById(id).orElse(null);
+    }
+
+    public Clase actualizarClase(Long id, Clase claseActualizada) {
+        return claseRepository.findById(id).map(clase -> {
+            clase.setNombre(claseActualizada.getNombre());
+            clase.setHorario(claseActualizada.getHorario());
+            clase.setCapacidadMaxima(claseActualizada.getCapacidadMaxima());
+            clase.setEntrenadorId(claseActualizada.getEntrenadorId());
+            return claseRepository.save(clase);
+        }).orElse(null);
+    }
+
+    public boolean eliminarClase(Long id) {
+        if (claseRepository.existsById(id)) {
+            claseRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
