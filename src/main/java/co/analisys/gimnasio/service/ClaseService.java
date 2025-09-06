@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import co.analisys.gimnasio.repository.ClaseRepository;
+import co.analisys.gimnasio.client.EntrenadorClient;
+import co.analisys.gimnasio.dto.EntrenadorDTO;
 import co.analisys.gimnasio.model.Clase;
 
 @Service
@@ -11,6 +13,9 @@ public class ClaseService {
     
     @Autowired
     private ClaseRepository claseRepository;
+
+    @Autowired
+    private EntrenadorClient entrenadorClient;
 
     public Clase programarClase(Clase clase) {
         return claseRepository.save(clase);
@@ -40,5 +45,9 @@ public class ClaseService {
             return true;
         }
         return false;
+    }
+
+    public EntrenadorDTO obtenerEntrenadorDeClase(Long entrenadorId) {
+        return entrenadorClient.getEntrenadorById(entrenadorId);
     }
 }
