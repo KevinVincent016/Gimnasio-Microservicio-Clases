@@ -2,9 +2,13 @@ package co.analisys.gimnasio.service;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
+
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import co.analisys.gimnasio.repository.ClaseRepository;
+import jakarta.transaction.Transactional;
 import co.analisys.gimnasio.client.EntrenadorClient;
+import co.analisys.gimnasio.dto.ClaseDTO;
 import co.analisys.gimnasio.dto.EntrenadorDTO;
 import co.analisys.gimnasio.model.Clase;
 
@@ -17,7 +21,20 @@ public class ClaseService {
     @Autowired
     private EntrenadorClient entrenadorClient;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Transactional
     public Clase programarClase(Clase clase) {
+        
+        //ClaseDTO claseDTO = new ClaseDTO(clase.getNombre(), clase.getHorario(), clase.getCapacidadMaxima(), clase.getEntrenadorId());
+        
+        rabbitTemplate.convertAndSend(
+            "gimnasio.exchange", 
+            "clases.events", 
+            clase
+        );
+
         return claseRepository.save(clase);
     }
 
