@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import co.analisys.gimnasio.repository.ClaseRepository;
+import co.analisys.gimnasio.service.kafka.OcupacionClaseProducer;
 import co.analisys.gimnasio.client.EntrenadorClient;
 import co.analisys.gimnasio.dto.EntrenadorDTO;
 import co.analisys.gimnasio.model.Clase;
@@ -17,8 +18,21 @@ public class ClaseService {
     @Autowired
     private EntrenadorClient entrenadorClient;
 
+    @Autowired
+    private OcupacionClaseProducer ocupacionClaseProducer;
+
     public Clase programarClase(Clase clase) {
-        return claseRepository.save(clase);
+        
+        
+        Clase savedClass = claseRepository.save(clase);
+
+        ocupacionClaseProducer.actualizarOcupacion(
+        savedClass.getId().toString(), 
+        savedClass.getNombre(),
+        10,
+        savedClass.getCapacidadMaxima());
+
+        return savedClass;
     }
 
     public List<Clase> obtenerTodasClases() {
